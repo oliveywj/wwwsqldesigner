@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
-import cgi
-import cgitb    #show error on webbrowser when error occurs
+#import cgi
+#import cgitb    #show error on webbrowser when error occurs
+import sqlparse
 import random
 
-import sys
-sys.path.insert(0,'./sqlparse-0.2.2-py2.7.egg')
-import sqlparse
 
-
-cgitb.enable()
+#cgitb.enable()
 
 sql = """
 -- ---
@@ -296,9 +293,19 @@ xmlHeader=xmlHeader+xmlStringTable+'</sql>'
 
 
 
-print("Content-type: text/text\n")    #\n : unless, Internal Server Error!
+#print("Content-type: text/html\n")    #\n : unless, Internal Server Error!
 
-form = cgi.FieldStorage()
+#print('<html>')
+#print('<head>')
+#print('<title>Hello Word - First CGI Program</title>')
+#print('</head>')
+#print('<body>')
 
-print(xmlHeader)
+#form = cgi.FieldStorage()
 
+print (xmlHeader)
+
+#print("success!")
+
+#print('</body>')
+#print('</html>')
