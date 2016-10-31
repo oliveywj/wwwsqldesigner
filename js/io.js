@@ -6,7 +6,7 @@ SQL.IO = function(owner) {
 		container:OZ.$("io")
 	};
 
-	var ids = ["saveload","clientlocalsave", "clientsave", "clientlocalload", "clientlocallist","clientload", "clientsql", 
+	var ids = ["saveload","clientlocalsave", "clientsave", "clientlocalload", "clientlocallist","clientload", "clientsql", "clientxmlfromsql", 
 				"dropboxsave", "dropboxload", "dropboxlist",
 				"quicksave", "serversave", "serverload",
 				"serverlist", "serverimport"];
@@ -50,6 +50,7 @@ SQL.IO = function(owner) {
 	OZ.Event.add(this.dom.dropboxsave, "click", this.dropboxsave.bind(this));
 	OZ.Event.add(this.dom.dropboxlist, "click", this.dropboxlist.bind(this));
 	OZ.Event.add(this.dom.clientsql, "click", this.clientsql.bind(this));
+	OZ.Event.add(this.dom.clientxmlfromsql, "click", this.clientxmlfromsql.bind(this));
 	OZ.Event.add(this.dom.quicksave, "click", this.quicksave.bind(this));
 	OZ.Event.add(this.dom.serversave, "click", this.serversave.bind(this));
 	OZ.Event.add(this.dom.serverload, "click", this.serverload.bind(this));
@@ -84,6 +85,7 @@ SQL.IO.prototype.click = function() { /* open io dialog */
 	this.build();
 	this.dom.ta.value = "";
 	this.dom.clientsql.value = _("clientsql") + " (" + window.DATATYPES.getAttribute("db") + ")";
+	this.dom.clientxmlfromsql.value = _("clientxmlfromsql") + " (" + window.DATATYPES.getAttribute("db") + ")";
 	this.owner.window.open(_("saveload"),this.dom.container);
 }
 
@@ -374,6 +376,45 @@ SQL.IO.prototype.clientsql = function() {
 	var path = bp + "db/"+window.DATATYPES.getAttribute("db")+"/output.xsl";
 	this.owner.window.showThrobber();
 	OZ.Request(path, this.finish.bind(this), {xml:true});
+}
+
+SQL.IO.prototype.clientxmlfromsql = function() {
+	var sql = this.dom.ta.value;
+	var bp = this.owner.getOption("staticpath");
+	xmlGeneratedFromSql ="empty text";
+
+	/* where I should take care of */
+	var path = bp + "parseSql/"+"xmlfromsql.py"; /* where I should take care of */
+	
+	var sql = sql.replace(/;/gi,'#semicolon#');
+	var params="sqlstring="+sql;
+	
+	var that = this;
+	
+	$.ajax({
+		type:"POST",
+		url:path,
+		data:params,
+		dataType:"text",
+		success:function(data){
+			//alert(data);
+			//alert(typeof(data));
+			alert("success");
+			//xmlGeneratedFromSql = data;
+			that.dom.ta.value = data;
+			
+			//$("#textarea").html(data);
+
+		},
+		error:function(XMLHttpRequest, textStatus, errorThrown){
+			alert("error on ajax POST");
+			alert(XMLHttpRequest.responseText);
+			alert(textStatus);
+			alert(errorThrown);
+		}
+	});
+
+	//this.dom.ta.value = xmlGeneratedFromSql;
 }
 
 SQL.IO.prototype.finish = function(xslDoc) {
